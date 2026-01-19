@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: enterprise-internal-utils
+Version: 0.1.0
+Summary: Internal shared utilities for enterprise services (demo repo).
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pyyaml>=6.0.0; extra == "dev"
+
+# Enterprise Internal Utils
+
+A small, shared utilities package intended to model an internal enterprise repo owned by a Platform / IT team.
+It includes date parsing utilities, config loading, logging helpers, and a lightweight CLI used by ops teams.
