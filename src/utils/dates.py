@@ -13,12 +13,16 @@ def parse_date(date_str: str) -> date:
     """
     Parse a date string into a datetime.date.
 
-    Intended supported formats:
+    Supported formats:
       - MM/DD/YYYY  (common in US)
       - DD/MM/YYYY  (common in EU)
 
-    NOTE: This implementation currently contains an intentional bug:
-    it assumes MM/DD/YYYY even when input is DD/MM/YYYY.
+    The function automatically detects the format based on the values:
+      - If the first number > 12, it's interpreted as DD/MM/YYYY (EU format)
+      - If the second number > 12, it's interpreted as MM/DD/YYYY (US format)
+      - If both numbers are <= 12 (ambiguous), defaults to MM/DD/YYYY (US format)
+
+    Both '/' and '-' separators are accepted.
     """
     s = (date_str or "").strip()
     if not s:
@@ -43,9 +47,18 @@ def parse_date(date_str: str) -> date:
     if y < 1900 or y > 2100:
         raise DateParseError(f"Year out of range: {y}")
 
-    # BUG: assumes a=month, b=day always.
-    month = a
-    day = b
+    # Detect format based on values:
+    # - If first number > 12, it must be a day (DD/MM/YYYY)
+    # - If second number > 12, it must be a day (MM/DD/YYYY)
+    # - If both <= 12, default to US format (MM/DD/YYYY)
+    if a > 12:
+        # First number is too large to be a month, so it must be DD/MM/YYYY
+        day = a
+        month = b
+    else:
+        # Either second number > 12 (must be day) or ambiguous (default to US)
+        month = a
+        day = b
 
     try:
         return date(y, month, day)
