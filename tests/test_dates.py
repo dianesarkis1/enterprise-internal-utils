@@ -7,7 +7,21 @@ def test_parse_us_date_mmddyyyy():
 
 
 def test_parse_eu_date_ddmmyyyy():
-    # This test is expected to FAIL until the bug is fixed.
     d = parse_date("31/01/2026")
     assert d.year == 2026 and d.month == 1 and d.day == 31
+
+
+def test_parse_us_date_with_dash_separator():
+    d = parse_date("12-25-2025")
+    assert d.year == 2025 and d.month == 12 and d.day == 25
+
+
+def test_parse_eu_date_with_dash_separator():
+    d = parse_date("25-12-2025")
+    assert d.year == 2025 and d.month == 12 and d.day == 25
+
+
+def test_parse_ambiguous_date_defaults_to_us_format():
+    d = parse_date("01/02/2026")
+    assert d.year == 2026 and d.month == 1 and d.day == 2
 
