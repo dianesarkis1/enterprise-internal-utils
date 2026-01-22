@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from utils.config import load_yaml_config
+from utils.config import ConfigError, load_yaml_config
 from utils.dates import parse_date
 
 
@@ -17,6 +17,11 @@ def main(argv: list[str] | None = None) -> int:
 
     p_cfg = sub.add_parser("validate-config", help="Load a YAML config and print normalized JSON")
     p_cfg.add_argument("path", type=str, help="Path to YAML config file")
+    p_cfg.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validate config without printing full contents; print 'OK' on success or error on failure",
+    )
 
     args = parser.parse_args(argv)
 
@@ -26,6 +31,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.cmd == "validate-config":
+        if args.dry_run:
+            try:
+                load_yaml_config(Path(args.path))
+                print("OK")
+                return 0
+            except ConfigError as e:
+                print(f"Error: {e}")
+                return 1
         cfg = load_yaml_config(Path(args.path))
         print(json.dumps(cfg, indent=2, sort_keys=True))
         return 0
